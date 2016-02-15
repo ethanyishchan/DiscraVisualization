@@ -22,10 +22,18 @@
             
             console.log('socket connected');
             // socket.emit('my event', {data: 'I\'m connected!'});
+
         });
 
         socket.on('somerandomevent', function(msg) {
             console.log("123");
+            console.log(msg);
+            $('#log').append('<p>Received: ' + msg.data + '</p>');
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
+
+        socket.on('my response', function(msg) {
+            console.log("my response");
             console.log(msg);
             $('#log').append('<p>Received: ' + msg.data + '</p>');
             socket.emit('my event', {data: 'I\'m connected!'});

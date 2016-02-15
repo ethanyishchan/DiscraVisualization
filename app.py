@@ -38,20 +38,25 @@ def mapview():
 
 
 
-@socketio.on('my response')
+# @socketio.on('my response')
 def test_message(message):
     print "hi"
     print "emitting: ", message
     # emit('my response', {'data': message})
     emit('somerandomevent', message)
 
+@socketio.on('my event')
+def test_event(message):
+    # print "hi"
+    print "receiving my event: ", message
+    # emit('my response', {'data': message})
+    # emit('somerandomevent', message)
 
 @socketio.on('connect')
 def handle_c_message():
-    message = "hi123"
+    message = "something connected"
     print 'received message: ' + message
-    send(message)
-    send('connected')
+    emit('my response', {'data': 'Connected'})
 
 
 
@@ -98,9 +103,9 @@ def consume_conflict():
     
 
 
-@app.route('/', methods=['GET', 'POST'])
-def parse_request():
-    print request.data
+# @app.route('/', methods=['GET', 'POST'])
+# def parse_request():
+#     print request.data
 
 
 if __name__ == "__main__":
