@@ -1,0 +1,115 @@
+
+.navbar {
+    background-color: #6FC5FE;
+    font-style: "Lato:100";
+    /*font-size:37px;*/
+    margin-bottom: 0px;
+
+    /*height : 6%;*/
+    font-size: 12;
+}
+
+.header1 {
+    height:37px;
+    width: 100%;
+   background-color: #6FC5FE;
+
+}
+.header2 {
+    height:60px;
+    width: 100%;
+    background-color: #6FC5FE;
+    font-style: "Lato:100";
+    font-size:37px;
+}
+
+#phrase_form {
+    left:25%;
+    right:25%;
+}
+
+#text_container {
+    left:18%;
+}
+
+#phrase_form > .input-group {
+    width: 100%
+}
+
+#text_input_container > input {
+    font-size: 30px;
+    height: 80px;
+  
+}
+#text_row {
+    margin-top: 100px;
+}
+
+#upload_text {
+    font-size: 20px;
+    text-align: center;
+}
+
+#video_container {
+    text-align: center;
+}
+
+#logo{
+    height : 40px;
+    width : 40px;
+    margin-top:-8px;
+}
+
+.navbar-brand{
+    font-color: #000000;
+
+}
+
+.navbar-default .navbar-brand {
+  color: #000000;
+  font-size: 25;
+  font-family: cursive;
+}
+
+.pac_container{
+
+    z-index: 1052 !important;
+}
+
+.modal{
+    z-index: 10;
+}
+
+/*.modal-backdrop{
+    z-index: 10;
+}*/
+
+
+.dropdown{
+    margin-right: 20%;
+
+}
+
+.modal-dialog{
+    z-index:60;
+
+}
+
+.container-fluid{
+    z-index: 1;
+
+}
+
+.navbar-header{
+    margin-right: 20%;
+}
+
+#myModal{
+    z-index:1000;
+}
+
+#activity-ticker{
+
+    overflow: scroll;
+    height :100vh;;
+}
