@@ -5,12 +5,20 @@ from kafka import KafkaConsumer
 from pykafka import KafkaClient
 from flask import Flask, request,render_template, jsonify, Response
 from flask_socketio import SocketIO, emit, send
+# from uwsgidecorators import *
+from gevent.queue import Queue
+import redis
+from juggernaut import Juggernaut
 
-
+red = redis.StrictRedis()
+# red = redis.Redis("localhost")
+print "hi"
+# print rs
+# red = 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
-
+jug = Juggernaut()
 GoogleMaps(app)
 
 
@@ -38,19 +46,41 @@ def mapview():
 
 
 
+
+def event_stream():
+    pubsub = red.pubsub()
+    pubsub.subscribe('chat')
+    for message in pubsub.listen():
+        print message
+        # yield 'data: %s\n\n' % message['data']
+
+
+@app.route('/post', methods=['POST'])
+def post():
+    message = flask.request.form['message']
+    user = flask.session.get('user', 'anonymous')
+    now = datetime.datetime.now().replace(microsecond=0).time()
+    red.publish('chat', u'[%s] %s: %s' % (now.isoformat(), user, message))
+
+
+@app.route('/stream')
+def stream():
+    return flask.Response(event_stream(),
+                          mimetype="text/event-stream")
+
+
+
+
 # @socketio.on('my response')
 def test_message(message):
-    print "hi"
     print "emitting: ", message
     # emit('my response', {'data': message})
     emit('somerandomevent', message)
 
 @socketio.on('my event')
 def test_event(message):
-    # print "hi"
     print "receiving my event: ", message
-    # emit('my response', {'data': message})
-    # emit('somerandomevent', message)
+
 
 @socketio.on('connect')
 def handle_c_message():
@@ -92,13 +122,13 @@ def consume_conflict():
         message =  (lat,lon)
         print "before: ", message
 
-
-        test_message(message) 
-
-
+        red.publish('chat', str(message))
+        # test_message(message) 
+        
         print "after"
-        return 0 
-        # return render_template('example.html', mymap=mymap, sndmap=sndmap, geocode = (lat,lon))
+        # return Response(event_stream(),mimetype="text/event-stream")
+
+        return render_template('example.html', mymap=mymap, sndmap=sndmap, geocode = (lat,lon))
     return 0
     
 
@@ -108,7 +138,11 @@ def consume_conflict():
 #     print request.data
 
 
-if __name__ == "__main__":
-    # app.run(debug=True)
-    socketio.run(app)
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     # app.run(debug=True)
+#     socketio.run(app)
+#     app.run(debug=True)
+
+if __name__ == '__main__':
+    app.debug = True
+    app.run(threaded=True)
