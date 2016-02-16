@@ -7,25 +7,68 @@
     </head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    
+     <h1>Server sent events</h1>
+     
+
+    <div id="event"></div>
+         
+    <script type="text/javascript">
+         var eventOutputContainer = document.getElementById("event");
+         var evtSrc = new EventSource("/subscribe");
+
+         evtSrc.onmessage = function(e) {
+             console.log(e.data);
+             eventOutputContainer.innerHTML = e.data;
+         };
+     </script>
+
     <script type=text/javascript>
 
     console.log('beignning of script')
-        var source = new EventSource('127.0.0.1:5000/stream');
-        source.onmessage = function (event) {
-            console.log(event.data);
-            console.log(event);
-             alert(event.data);
-        };
 
-
-      var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-
-        socket.on('connect', function() {           
-            console.log('socket connected');
+    function doPoll(){
+        console.log("inside poll");
+        $.ajax({
+            url:'/test_poll',
+            data: 'hihi',
+            type: 'POST',
+            success:function(response){
+                console.log(response);
+                setTimeout(doPoll,1000);
+            },
+            error: function(error){
+                console.log(error);
+                setTimeout(doPoll,1000);
+            }
         });
+    }
+
+    // doPoll();
+
+
+    // console.log(source);
+        // var source = new EventSource("https://127.0.0.1:6379/chat");
+
+        // console.log(source);
+        // source.onmessage = function (event) {
+        //     console.log(event.data);
+        //     console.log(event);
+        //      alert(event.data);
+        // };
+
+        // source.addEventListener('chat', function(e) {
+        //   console.log(e.data);
+        // }, false);
+
+
+        // var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+
+        // socket.on('connect', function() {           
+        //     console.log('socket connected');
+        // });
 
         // socket.on('somerandomevent', function(msg) {
         //     console.log("123");
@@ -34,12 +77,12 @@
         //     socket.emit('my event', {data: 'I\'m connected!'});
         // });
 
-        socket.on('my response', function(msg) {
-            console.log("my response");
-            console.log(msg);
-            $('#log').append('<p>Received: ' + msg.data + '</p>');
-            socket.emit('my event', {data: 'I\'m connected!'});
-        });
+        // socket.on('my response', function(msg) {
+        //     console.log("my response");
+        //     console.log(msg);
+        //     $('#log').append('<p>Received: ' + msg.data + '</p>');
+        //     socket.emit('my event', {data: 'I\'m connected!'});
+        // });
 
 
 
@@ -47,33 +90,7 @@
 
     </script>
     <script type="text/javascript" charset="utf-8">
-
-
-    // $(document).ready(function(){
-    //     // console.log('http://' + document.domain + ':' + location.port + '/test');
-    //     var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-
-    //     console.log(socket);
-
-    //     socket.on('my response', function(msg) {
-    //         $('#log').append('<p>Received: ' + msg + '</p>');
-    //         console.log(msg);
-    //     });
-
-
-    //     $('form#emit').submit(function(event) {
-    //         socket.emit('my event', {data: $('#emit_data').val()});
-    //         return false;
-    //     });
-    //     $('form#broadcast').submit(function(event) {
-    //         socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
-    //         return false;
-    //     });
-    // });
-
-    // var someJavaScriptVar = '{{ geocode[0] }}';
-    // var someJavaScriptVar_2 = '{{ geocode[1] }}';
-    // alert(someJavaScriptVar,someJavaScriptVar_2);
+            //
     </script>
     
     <body>

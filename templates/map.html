@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+     <html>
+      <head>
+      </head>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+      <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+      <script src="/static/js/jquery-1.11.2.min.js"></script>
+      <script src="/static/js/bootstrap.js"></script>
+
+       <body>
+         <h1>Server sent events</h1>
+        
+        <div id="map">  hi this is the map </div>
+        <div id="log"> this is the log </div>
+        
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPKCyC2GBCVF2hyj27uFITu2v2fQTSaWE"></script>
+        <script>
+          var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -34.397, lng: 150.644},
+            zoom: 8
+          });
+          console.log('mapped');
+        </script>
+
+         <div id="event"></div>
+
+         <script type="text/javascript">
+           var eventOutputContainer = document.getElementById("event");
+           var evtSrc = new EventSource("/subscribe");
+
+           evtSrc.onmessage = function(e) {
+               console.log(e.data);
+               console.log('right after data');
+               // eventOutputContainer.innerHTML = e.data;
+                $('#log').append('<p>Received: ' + e.data + '</p>');
+                console.log('hiii');
+                var myLatLng = {lat: -34.397 + random() * 1, lng: 150.644 + random() * 1};
+                console.log(myLatlng);
+
+                var marker = new google.maps.Marker({
+                  position: myLatLng,
+                  map: map,
+                  title: 'Hello World!'
+                });
+           };
+         </script>
+
+
+
+
+       </body>
+     </html>

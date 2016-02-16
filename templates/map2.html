@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <style>
+      #map {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+  
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/jquery-1.11.2.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+          <script 
+    src="https://maps.googleapis.com/maps/api/js"
+        async defer>
+        </script>
+  </head>
+
+  <body>
+    <h1>Discra Visualization</h1>
+    <div id="map"></div>
+    <div id="log"> this is the log </div>
+    <div id="event">event</div>
+
+
+      <!--script 
+    src="https://maps.googleapis.com/maps/api/js?callback=initMap"
+        async defer>
+        </script-->
+
+    <script type="text/javascript">
+      var mapMarkers = [];
+      var map;
+    // Latitude: -85 to +85 (actually -85.05115 for some reason)
+    // Longitude: -180 to +180
+      var mapDiv = document.getElementById('map');
+      var map = new google.maps.Map(mapDiv, {
+        center: {lat: 37.424106, lng: -122.166076},
+        zoom: 8
+      });
+
+      console.log(map);
+      console.log('logged map above');
+
+     var eventOutputContainer = document.getElementById("event");
+     var evtSrc = new EventSource("/subscribe");
+
+     evtSrc.onmessage = function(e) {
+         console.log(e.data);
+         // eventOutputContainer.innerHTML = e.data;
+          $('#log').append('<p>Received: ' + e.data + '</p>');
+
+          var myLatLng = {lat: -34.397 + Math.random() * 1, lng: 150.644 + Math.random() * 1};
+          console.log(myLatLng);
+
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            setMap: map,
+            title: 'Hello World!'
+          });
+
+          marker.setIcon('http://maps.google.com/mapfiles/ms/micons/ltblue-dot.png');
+          mapMarkers.push(marker);
+          console.log(marker)//.setMap(map);
+          console.log(map);
+          marker.setMap(map);
+
+     };
+   </script>
+
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/jquery-1.11.2.min.js"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Discra Visualization</h1>
+
+    <div id="log">log</div>
+    <div id="event">event</div>
+    <div id="map"></div>
+    <h1>end</h1>
+
+    <script>
+
+    function initMap() {
+      var myLatLng = {lat: -25.363, lng: 131.044};
+
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 4,
+        center: myLatLng
+      });
+
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title: 'Hello World!'
+      });
+    }
+
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+
+    <script type="text/javascript">
+     var eventOutputContainer = document.getElementById("event");
+     var evtSrc = new EventSource("/subscribe");
+
+     evtSrc.onmessage = function(e) {
+         console.log(e.data);
+         // eventOutputContainer.innerHTML = e.data;
+          $('#log').append('<p>Received: ' + e.data + '</p>');
+
+          var myLatLng = {lat: -34.397 + Math.random() * 1, lng: 150.644 + Math.random() * 1};
+          console.log(myLatLng);
+
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            setMap: map,
+            title: 'Hello World!'
+          });
+
+          marker.setIcon('http://maps.google.com/mapfiles/ms/micons/ltblue-dot.png');
+          // mapMarkers.push(marker);
+          console.log(marker)//.setMap(map);
+          console.log(map);
+          marker.setMap(map);
+
+     };
+    </script>
+
+  </body>
+</html>
