@@ -16,6 +16,7 @@ from kafka import KafkaConsumer
 from pykafka import KafkaClient
 from flask import Flask, request,render_template, jsonify, Response, session
 from flask.ext.cache import Cache
+import numpy as np
 
 # SSE "protocol" is described here: http://mzl.la/UPFyxY
 class ServerSentEvent(object):
@@ -68,13 +69,39 @@ def debug():
 @app.route("/conflict", methods=['POST', 'GET'])
 def consume_conflict():
     #Dummy data - pick up from request for real data
-    status_update = json.loads(request.data)
-    gufi = status_update['flightId']
-    lat = status_update['lat']
-    lon = status_update['lon']
-    speed = status_update['speed']
-    heading = status_update['heading']
-    msg =  (lat,lon)
+    base_lat = 37.424106
+    base_long = -122.166076
+
+    drone,lat, lon , heading= request.data.split('~')
+    lat, lon , heading= float(lat), float(lon), float(heading)
+    #convert it to lat meters
+
+    heading = heading / np.pi * 180
+
+    lat_offset = lat / 111111.0 * 1.0
+    new_lat = base_lat + lat_offset
+    lon_offset = lon / 111111.0 * np.cos(new_lat)
+    new_lon = base_long + lon_offset
+    msg = drone + "~" + str(new_lat) + "~" + str(new_lon) + "~" + str(heading)
+
+    # If your displacements aren't too great (less than a few kilometers) and you're not right at the poles, 
+    #use the quick and dirty estimate that 111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) 
+    #and 111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude).
+
+    #convert it to 
+
+
+    # status_update = json.loads(request.data)
+    # gufi = status_update['flightId']
+    # lat = status_update['lat']
+    # lon = status_update['lon']
+    # speed = status_update['speed']
+    # heading = status_update['heading']
+    # msg =  (lat,lon)
+
+    # msg = request.data
+
+
 
     def notify():
         for sub in subscriptions[:]:

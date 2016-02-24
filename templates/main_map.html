@@ -2,8 +2,8 @@
   <head>
     <style>
       #map {
-        width: 500px;
-        height: 400px;
+        width: 700px;
+        height: 700px;
       }
     </style>
   
@@ -37,76 +37,78 @@
       latLng = new google.maps.LatLng(37.424106, -122.166076)
       var mapOptions = {
         center: latLng,
-        zoom: 10,
+        zoom: 14,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      
 
-      // var marker = new google.maps.Marker({
-      //     position: latLng,
-      //     title:"Hello World!",
-      //     visible: true
-      // });
-      // marker.setMap(map);
+      var plane_img = {
+        // url: "http://maps.google.com/mapfiles/ms/micons/blue-dot.png",
+        url: "../static/airplane_black_small.png",
+        rotation: [95],
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(100, 100),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+      };
 
        evtSrc.onmessage = function(e) {
-         console.log(e.data);
-         // eventOutputContainer.innerHTML = e.data;
-          $('#log').append('<p>Received: ' + e.data + '</p>');
+          // $('#log').append('<p>Received: ' + e.data + '</p>');
+          var longlatstring = e.data.split("~");
 
-          var myLatLng = new google.maps.LatLng(37.424106 + Math.random() * 0.001, -122.166076 + Math.random()* 0.001)
-          console.log(myLatLng);
-          addMarker(myLatLng);
+          var flightId = longlatstring[0];
+          var lat = parseFloat(longlatstring[1]);
+          var lon = parseFloat(longlatstring[2]);
+          var heading = parseFloat(longlatstring[3]);
+          // console.log(flightId);
+          // console.log(lon,lat);
+          // console.log(heading);
+          var myLatLng = new google.maps.LatLng(lat , lon);
+          // addMarker(myLatLng);
+          var curr_color;
+
+          if (flightId === 'drone0'){
+            curr_color = 'blue';
+          }else if (flightId === 'drone1'){
+            curr_color = 'red';
+          }else{
+            curr_color = 'green';
+          }
+
+
           var marker = new google.maps.Marker({
             position: myLatLng,
-            title: 'Hello World!',
-            // map: map,
+            map: map,
+            icon: {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              scale: 1,
+              rotation: heading,
+              fillColor: curr_color,
+              strokeColor: curr_color
+            },
             visible: true
           });
-
-          // marker.setIcon("http://maps.google.com/mapfiles/ms/micons/blue-dot.png");
-          // mapMarkers.push(myLatLng);
-          marker.setMap(map);
 
      };
 
     }
 
-    function addMarker(location) {
-      marker = new google.maps.Marker({
-        position: location,
-        map: map
-      });
-    }
+    // function addMarker(location) {
+    //   marker = new google.maps.Marker({
+    //     position: location,
+    //     map: map
+    //   });
+    // }
 
      var eventOutputContainer = document.getElementById("event");
      var evtSrc = new EventSource("/subscribe");
 
-     // evtSrc.onmessage = function(e) {
-     //     console.log(e.data);
-     //     // eventOutputContainer.innerHTML = e.data;
-     //      $('#log').append('<p>Received: ' + e.data + '</p>');
-
-     //      var myLatLng = new google.maps.LatLng(37.424106 + Math.random() * 0.001, -122.166076 + Math.random()* 0.001)
-     //      console.log(myLatLng);
-     //      addMarker(myLatLng);
-     //      // var marker = new google.maps.Marker({
-     //      //   position: myLatLng,
-     //      //   title: 'Hello World!',
-     //      //   // map: map,
-     //      //   visible: true
-     //      // });
-
-     //      // marker.setIcon("http://maps.google.com/mapfiles/ms/micons/blue-dot.png");
-     //      // mapMarkers.push(myLatLng);
-     //      // marker.setMap(map);
-     //      // console.log(marker);
-     //      // initMap();  
-
-     // };
    </script>
        <script type="text/javascript">
-    google.maps.event.addDomListener(window, 'load', initialize);
+      google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 
   </body>
