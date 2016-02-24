@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <style>
+      #map {
+        width: 500px;
+        height: 400px;
+      }
+    </style>
+  
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/jquery-1.11.2.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script-->
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+  </head>
+
+  <body>
+    <h1>Discra Visualization</h1>
+    <div id="map"></div>
+    <div id="log"> this is the log </div>
+    <div id="event">event</div>
+
+
+    <!--script async defer
+        src="https://maps.googleapis.com/maps/api/js"></script-->
+
+      <!--script async defer
+        src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script-->
+
+    <script type="text/javascript">
+    var mapMarkers = new Array();
+    var map;
+
+
+    function initialize() {
+      latLng = new google.maps.LatLng(37.424106, -122.166076)
+      var mapOptions = {
+        center: latLng,
+        zoom: 10,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+      // var marker = new google.maps.Marker({
+      //     position: latLng,
+      //     title:"Hello World!",
+      //     visible: true
+      // });
+      // marker.setMap(map);
+
+       evtSrc.onmessage = function(e) {
+         console.log(e.data);
+         // eventOutputContainer.innerHTML = e.data;
+          $('#log').append('<p>Received: ' + e.data + '</p>');
+
+          var myLatLng = new google.maps.LatLng(37.424106 + Math.random() * 0.001, -122.166076 + Math.random()* 0.001)
+          console.log(myLatLng);
+          addMarker(myLatLng);
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            title: 'Hello World!',
+            // map: map,
+            visible: true
+          });
+
+          // marker.setIcon("http://maps.google.com/mapfiles/ms/micons/blue-dot.png");
+          // mapMarkers.push(myLatLng);
+          marker.setMap(map);
+
+     };
+
+    }
+
+    function addMarker(location) {
+      marker = new google.maps.Marker({
+        position: location,
+        map: map
+      });
+    }
+
+     var eventOutputContainer = document.getElementById("event");
+     var evtSrc = new EventSource("/subscribe");
+
+     // evtSrc.onmessage = function(e) {
+     //     console.log(e.data);
+     //     // eventOutputContainer.innerHTML = e.data;
+     //      $('#log').append('<p>Received: ' + e.data + '</p>');
+
+     //      var myLatLng = new google.maps.LatLng(37.424106 + Math.random() * 0.001, -122.166076 + Math.random()* 0.001)
+     //      console.log(myLatLng);
+     //      addMarker(myLatLng);
+     //      // var marker = new google.maps.Marker({
+     //      //   position: myLatLng,
+     //      //   title: 'Hello World!',
+     //      //   // map: map,
+     //      //   visible: true
+     //      // });
+
+     //      // marker.setIcon("http://maps.google.com/mapfiles/ms/micons/blue-dot.png");
+     //      // mapMarkers.push(myLatLng);
+     //      // marker.setMap(map);
+     //      // console.log(marker);
+     //      // initMap();  
+
+     // };
+   </script>
+       <script type="text/javascript">
+    google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+  </body>
+</html>
