@@ -1,37 +1,16 @@
 <html>
   <head>
-    <style>
-      #map {
-        width: 700px;
-        height: 700px;
-      }
-    </style>
-  
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="/static/js/jquery-1.11.2.min.js"></script>
-    <script src="/static/js/bootstrap.js"></script>
-    <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script-->
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
+  {% include 'header.html' %}
   </head>
-
+  
+  {% include 'navbar.html' %}
+  
   <body>
-    <h1>Discra Visualization</h1>
     <div id="map"></div>
-    <div id="log"> this is the log </div>
-    <div id="event">event</div>
-
-
-    <!--script async defer
-        src="https://maps.googleapis.com/maps/api/js"></script-->
-
-      <!--script async defer
-        src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script-->
-
+    <div id="log">  </div>
     <script type="text/javascript">
     var mapMarkers = new Array();
     var map;
-
 
     function initialize() {
       latLng = new google.maps.LatLng(37.424106, -122.166076)

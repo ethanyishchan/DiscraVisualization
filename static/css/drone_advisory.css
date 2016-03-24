@@ -1,0 +1,22 @@
+
+
+/*.panel-primary {
+     background-color: #194719 !important;
+}
+*/
+/*.panel panel-default{
+	background-color: #9E3835;
+}*/
+
+/*.panel *//*{
+	background-color: #9E3835;
+}*/
+
+/*.panel-heading{
+    background-color: #9E3835;
+}*/
+
+/*.panel-default > .panel-heading {
+  background-color: red;
+}*/
+/*.panel-heading {background-color: red!important}*/

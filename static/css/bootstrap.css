@@ -3834,9 +3834,12 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/
   border: 1px solid transparent;
 }
+
+
+
 @media (min-width: 768px) {
   .navbar {
     border-radius: 4px;
@@ -5289,7 +5292,7 @@ a.list-group-item-danger.active:focus {
 }
 .panel-default > .panel-heading {
   color: #333;
-  background-color: #f5f5f5;
+  background-color: #B0B0B0;
   border-color: #ddd;
 }
 .panel-default > .panel-heading + .panel-collapse > .panel-body {
@@ -6330,3 +6333,19 @@ button.close {
   }
 }
 /*# sourceMappingURL=bootstrap.css.map */
+.navbar-default .navbar-brand{
+   color: white; /*Change active text color here*/
+   font-size: 16;
+}  
+.navbar-default .navbar-nav > li > a {
+   color: white; /*Change active text color here*/
+   font-size: 14;
+}
+
+.navbar-brand,
+.navbar-nav li a {
+    line-height: 60px;
+    height: 60px;
+    padding-top: 0;
+    padding-bottom:  0;
+}
