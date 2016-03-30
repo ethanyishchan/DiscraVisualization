@@ -13,16 +13,17 @@
           <div id="map"></div>
         </div>
         <!-- End Google Map Stuff-->
-
-        <!--Drone 1 Summary-->
+        <!-- Drone 2 Summary-->
         <div class="col-md-6">
-          
           <div class="panel panel-default">
           <!-- Default panel contents -->
           <div class="panel-heading" style = "background-color: #009900"> <strong> Drone 2 Conflict Advisory </strong> </div>
+          <div class="alert alert-info" id = "curr_status_2"> 
+            <div id = "arrow_2" style = "-webkit-transform: rotate(-0deg)"> <h1>↑</h1></div>
+            <h2><strong> Advisory </strong></h2>  
+          </div> 
           <!-- Table -->
-          <div class="alert alert-info" id = "curr_status_1" > <h2><strong>Advisory</strong></h2> </div> 
-          <table class="table" id = "table_div_1">
+          <table class="table" id = "table_div_2">
             <thead> 
               <tr> 
                 <th>Time</th> 
@@ -38,9 +39,9 @@
         </div>
 
         <script type="text/javascript">
-        function initialize_drone_advisory_1() {
+        function initialize_drone_advisory_2() {
           var timezone_offset = -8;
-           evtSrc_drone_1.onmessage = function(e) {
+           evtSrc_drone_2.onmessage = function(e) {
               var curr_json = JSON.parse(e.data);
               var coc_flag = curr_json["clearOfConflict"];
               var gufi = curr_json["gufi"];
@@ -51,54 +52,62 @@
               var turn = waypts["turn"];
               var heading = waypts["heading"];
               var speed = waypts["speed"];
-              // var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
-
+              var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+              var new_entry;
               var turn_float = (parseFloat(turn) / Math.PI * 180.0).toFixed(2) ;
 
+              var turn_float_round = Math.round( turn_float );
               if (turn_float < 0){
                 turn_float = "Right " + -1 * turn_float + "°";
               }else if (turn_float > 0) {
-                turn_float = "Left " + turn_float + "°"
+                turn_float = "Left " + turn_float + "°";
+                turn_float_round = -1 * turn_float_round
               }else{
                 turn_float = turn_float + "°"
               }
 
-              // var curr_time = new Date( new Date().getTime() + 0 * 3600 * 1000);
-              var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
-              // curr_time = curr_time.getHours() + ":" + curr_time.getMinutes() + ":" + curr_time.getSeconds() ;
-              // curr_time = ("0" + curr_time.getHours()).slice(-2) + ":" + ("0" + curr_time.getMinutes()).slice(-2) + ":" + ("0" + curr_time.getSeconds()).slice(-2) ;
-              
-              var new_entry;
+              var new_arrow = "<div id = \"arrow_2\" style = \"-webkit-transform: rotate("+ turn_float_round + "deg)\"> <h1>↑</h1></div>";
+
+              // if (coc_flag === "false"){
+              //   // new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+              //   new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> </tr>';
+
+              //   document.getElementById('curr_status_2').className = "alert alert-danger";
+              //   $('#curr_status_2').html(new_arrow_2 + "<h2><strong>" + turn_float + "</strong></h2>" );
+              // }else{
+              //   // new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+              //   new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> </tr>';
+                
+              //   document.getElementById('curr_status_2').className = "alert alert-success"
+              //   $('#curr_status_2').html(new_arrow_2 + "<h2><strong>" + turn_float + "</strong></h2>" );
+              // }
+
               if (coc_flag === "false"){
-                // new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td style = "-webkit-transform: rotate(-10deg)"> <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
-                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td style = "-webkit-transform: rotate(-10deg)"> <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td>  </tr>';
+                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td > <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td>  </tr>';
+                document.getElementById('curr_status_2').className = "alert alert-danger";
+                $('#curr_status_2').html(new_arrow + "<h2><strong>" + turn_float + "</strong></h2>" );
 
-
-                document.getElementById('curr_status_1').className = "alert alert-danger";
-                $('#curr_status_1').html("<h2><strong>" + turn_float + "</strong></h2>" );
               }else{
-                // new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td><b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
                 new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td><b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td>  </tr>';
-                document.getElementById('curr_status_1').className = "alert alert-success";
-                $('#curr_status_1').html("<h2><strong>" + turn_float + "</strong></h2>" );
+                document.getElementById('curr_status_2').className = "alert alert-success";
+                $('#curr_status_2').html(new_arrow +  "<h2><strong>" + turn_float + "</strong></h2>" );
               }
-              $('#table_div_1').prepend(new_entry);
-
-
-              
+              $('#table_div_2').prepend(new_entry);
          };
 
         }
-           var evtSrc_drone_1 = new EventSource("/advisory_drone_2");
+           var evtSrc_drone_2 = new EventSource("/advisory_drone_2");
 
          </script>
 
-          <script type="text/javascript">
-              google.maps.event.addDomListener(window, 'load', initialize_drone_advisory_1);
-          </script>
-        </div> <!--end col-->
-        <!-- END Drone 1 Summary-->
-     
+        <script type="text/javascript">
+            google.maps.event.addDomListener(window, 'load', initialize_drone_advisory_2);
+        </script>
+
+        </div>
+        <!-- END Drone 2 Summary-->
+  
+
         <script type="text/javascript">
           var mapMarkers = new Array();
           var map;
