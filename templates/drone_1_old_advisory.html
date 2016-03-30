@@ -1,0 +1,152 @@
+<html>
+  <head>
+  {% include 'header.html' %}
+  </head>
+  
+  {% include 'navbar.html' %}
+  
+  <body>
+
+    <div class="row">
+        <div class="col-md-6">
+          <div id="map"></div>
+        </div>
+        <div class="col-md-6">
+              <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading"> <strong> Drone Conflict Advisory </strong> </div>
+      <!-- Table -->
+      <table class="table" id = "table_div">
+        <thead> 
+          <tr> 
+            <th>Time</th> 
+            <th>Conflict</th> 
+            <th>Action(Turn)</th> 
+            <th>Gufi</th> 
+            <th>Lat</th> 
+            <th>Lon</th> 
+            <th>Speed</th> 
+            <th>Heading</th> 
+          </tr> 
+        </thead>
+        <tbody>
+        </tbody>
+
+      </table>
+    </div>
+
+    <script type="text/javascript">
+    function initialize_drone_advisory() {
+      var timezone_offset = -8;
+       evtSrc_drone_1.onmessage = function(e) {
+          var curr_json = JSON.parse(e.data);
+          var coc_flag = curr_json["clearOfConflict"];
+          var gufi = curr_json["gufi"];
+          var waypts = curr_json["waypoints"];
+          waypts = waypts[0];
+          var lon = waypts["lon"];
+          var lat = waypts["lat"];
+          var turn = waypts["turn"];
+          var heading = waypts["heading"];
+          var speed = waypts["speed"];
+          var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+          var new_entry;
+          if (coc_flag === "false"){
+            new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td><b>' + coc_flag + '</b></td> <td style="width: 90px;">' + turn + '</td> <td>' + gufi + '</td>  <td>' + lat + '</td> <td>' + lon + '</td>  <td>' + speed + '</td> <td>' + heading + '</td> </tr>';
+          }else{
+            new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td>' + coc_flag + '</td> <td style="width: 90px;">' + turn + '</td> <td>' + gufi + '</td>  <td>' + lat + '</td> <td>' + lon + '</td>  <td>' + speed + '</td> <td>' + heading + '</td> </tr>';
+          }
+          $('#table_div').prepend(new_entry);
+     };
+
+    }
+     // var eventOutputContainer = document.getElementById("event");
+     var evtSrc_drone_1 = new EventSource("/advisory_drone_1");
+
+   </script>
+
+  <script type="text/javascript">
+      google.maps.event.addDomListener(window, 'load', initialize_drone_advisory);
+  </script>
+
+        </div>
+    </div>
+
+    
+    <script type="text/javascript">
+    var mapMarkers = new Array();
+    var map;
+
+    function initialize() {
+      latLng = new google.maps.LatLng(37.424106, -122.166076)
+      var mapOptions = {
+        center: latLng,
+        zoom: 14,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      
+
+      var plane_img = {
+        // url: "http://maps.google.com/mapfiles/ms/micons/blue-dot.png",
+        url: "../static/airplane_black_small.png",
+        rotation: [95],
+        // This marker is 20 pixels wide by 32 pixels high.
+        size: new google.maps.Size(100, 100),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(0, 32)
+      };
+
+       evtSrc.onmessage = function(e) {
+          // $('#log').append('<p>Received: ' + e.data + '</p>');
+          var longlatstring = e.data.split("~");
+
+          var flightId = longlatstring[0];
+          var lat = parseFloat(longlatstring[1]);
+          var lon = parseFloat(longlatstring[2]);
+          var heading = parseFloat(longlatstring[3]);
+          // console.log(flightId);
+          // console.log(lon,lat);
+          // console.log(heading);
+          var myLatLng = new google.maps.LatLng(lat , lon);
+          // addMarker(myLatLng);
+          var curr_color;
+
+          if (flightId === 'drone0'){
+            curr_color = 'blue';
+          }else if (flightId === 'drone1'){
+            curr_color = '#0066ff';
+          }else{
+            curr_color = 'green';
+          }
+
+
+          var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            icon: {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              scale: 1,
+              rotation: heading,
+              fillColor: curr_color,
+              strokeColor: curr_color
+            },
+            visible: true
+          });
+
+     };
+
+    }
+
+     var eventOutputContainer = document.getElementById("event");
+     var evtSrc = new EventSource("/subscribe");
+
+    </script>
+       <script type="text/javascript">
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+  </body>
+</html>

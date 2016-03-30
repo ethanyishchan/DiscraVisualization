@@ -16,17 +16,19 @@
 
         <!--Drone 1 Summary-->
         <div class="col-md-3">
+          
           <div class="panel panel-default">
           <!-- Default panel contents -->
           <div class="panel-heading" style = "background-color: #0066ff"> <strong> Drone 1 Conflict Advisory </strong> </div>
           <!-- Table -->
+          <div class="alert alert-info" id = "curr_status_1" > <h2><strong>Advisory</strong></h2> </div> 
           <table class="table" id = "table_div_1">
             <thead> 
               <tr> 
                 <th>Time</th> 
-                <th>Clear of Conflict</th> 
+                <th>All Clear</th> 
                 <th>Turn / °</th> 
-                <th>Gufi</th> 
+                
               </tr> 
             </thead>
             <tbody>
@@ -52,17 +54,38 @@
               // var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
 
               var turn_float = (parseFloat(turn) / Math.PI * 180.0).toFixed(2) ;
+
+              if (turn_float < 0){
+                turn_float = "Right " + -1 * turn_float + "°";
+              }else if (turn_float > 0) {
+                turn_float = "Left " + turn_float + "°"
+              }else{
+                turn_float = turn_float + "°"
+              }
+
               var curr_time = new Date( new Date().getTime() + 0 * 3600 * 1000);
 
-              curr_time = curr_time.getHours() + ":" + curr_time.getMinutes() + ":" + curr_time.getSeconds() ;
+              // curr_time = curr_time.getHours() + ":" + curr_time.getMinutes() + ":" + curr_time.getSeconds() ;
+              curr_time = ("0" + curr_time.getHours()).slice(-2) + ":" + ("0" + curr_time.getMinutes()).slice(-2) + ":" + ("0" + curr_time.getSeconds()).slice(-2) ;
 
               var new_entry;
               if (coc_flag === "false"){
-                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td style = "-webkit-transform: rotate(-10deg)"> <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                // new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td style = "-webkit-transform: rotate(-10deg)"> <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + curr_time +'</th> <td style = "-webkit-transform: rotate(-10deg)"> <b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td>  </tr>';
+
+
+                document.getElementById('curr_status_1').className = "alert alert-danger";
+                $('#curr_status_1').html("<h2><strong>" + turn_float + "</strong></h2>" );
               }else{
-                new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td><b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                // new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td><b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + curr_time +'</th> <td><b>'+ coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td>  </tr>';
+                document.getElementById('curr_status_1').className = "alert alert-success";
+                $('#curr_status_1').html("<h2><strong>" + turn_float + "</strong></h2>" );
               }
               $('#table_div_1').prepend(new_entry);
+
+
+              
          };
 
         }
@@ -81,13 +104,14 @@
           <div class="panel panel-default">
           <!-- Default panel contents -->
           <div class="panel-heading" style = "background-color: #009900"> <strong> Drone 2 Conflict Advisory </strong> </div>
+          <div class="alert alert-info" id = "curr_status_2"> <h2><strong> Advisory </strong></h2>  </div> 
           <!-- Table -->
           <table class="table" id = "table_div_2">
             <thead> 
               <tr> 
-                <th>Clear of Conflict</th> 
+                <th>All Clear</th> 
                 <th>Turn / °</th> 
-                <th>Gufi</th> 
+                
               </tr> 
             </thead>
             <tbody>
@@ -113,10 +137,27 @@
               var curr_time = new Date( new Date().getTime() + timezone_offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
               var new_entry;
               var turn_float = (parseFloat(turn) / Math.PI * 180.0).toFixed(2) ;
-              if (coc_flag === "false"){
-                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+
+             if (turn_float < 0){
+                turn_float = "Right " + -1 * turn_float + "°";
+              }else if (turn_float > 0) {
+                turn_float = "Left " + turn_float + "°"
               }else{
-                new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                turn_float = turn_float + "°"
+              }
+
+              if (coc_flag === "false"){
+                // new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                new_entry = '<tr style="background-color:#D94E51"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> </tr>';
+
+                document.getElementById('curr_status_2').className = "alert alert-danger";
+                $('#curr_status_2').html("<h2><strong>" + turn_float + "</strong></h2>" );
+              }else{
+                // new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> <td>' + gufi + '</td> </tr>';
+                new_entry = '<tr style="background-color:#84C477"> <th scope=\"row\">' + coc_flag + '</b></td> <td style="width: 90px;">' + turn_float + '</td> </tr>';
+                
+                document.getElementById('curr_status_2').className = "alert alert-success"
+                $('#curr_status_2').html("<h2><strong>" + turn_float + "</strong></h2>" );
               }
               $('#table_div_2').prepend(new_entry);
          };
