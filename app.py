@@ -23,6 +23,10 @@ import numpy as np
 base_lat = 37.422570
 base_long = -122.176514
 
+#change this to whatever the gufi is right now
+gufi_1 = '38dd9f15-b703-42ac-a870-85e91a2c0d94'
+gufi_2 = 'baa123cc-fcb7-47a4-87d3-be67952039f4'
+
 # SSE "protocol" is described here: http://mzl.la/UPFyxY
 class ServerSentEvent(object):
 
@@ -74,6 +78,42 @@ def index():
              'http://maps.google.com/mapfiles/ms/icons/blue-dot.png':[(37.4300, -122.1400)]})
 
     return render_template('main_map.html', mymap = mymap, sndmap = sndmap)
+
+
+#receive incoming advisories from kafka server
+@app.route("/consume_advisory_live", methods=['POST', 'GET'])
+def consume_advisory_live():
+    msg = request.data
+
+    advisory_array = json.loads(msg)
+    # print advisory_array
+
+    def notify(m, adv_subs):
+        for sub in adv_subs[:]:
+            sub.put(m)
+
+    for gufi_adv in advisory_array:
+        if gufi_adv["gufi"] == gufi_1:
+            gufi_adv["gufi"] = "drone1"
+        if gufi_adv["gufi"] == gufi_2:
+            gufi_adv["gufi"] = "drone2"
+
+
+        curr_lat = float(gufi_adv['waypoints'][0]["lat"])
+        curr_lon = float(gufi_adv['waypoints'][0]["lon"])
+        new_lat, new_lon = lat_lon_convert(curr_lat,curr_lon)
+        gufi_adv['waypoints'][0]["lat"] = str(new_lat)
+        gufi_adv['waypoints'][0]["lon"] = str(new_lon)
+        gufi_msg = json.dumps(gufi_adv)
+        if gufi_adv["gufi"] == "drone1":
+            gevent.spawn(notify(  gufi_msg,    advisory_subscriptions_1))
+        elif gufi_adv["gufi"] == "drone2":
+            gevent.spawn(notify(  gufi_msg,    advisory_subscriptions_2))
+        else:
+            gevent.spawn(notify(  gufi_msg,    advisory_subscriptions_3))
+
+    # gevent.spawn(notify(msg))
+    return "OK"
 
 #receive incoming advisories from kafka server
 @app.route("/consume_advisory", methods=['POST', 'GET'])
@@ -176,8 +216,6 @@ def consume_conflict():
     # #starts at Lake Lagunita for now
     # base_lat = 37.422570
     # base_long = -122.176514
-
-    # 37.422570, -122.176514
     drone,lat, lon , heading= request.data.split('~')
     lat, lon , heading= float(lat), float(lon), float(heading)
     #convert it to lat meters
@@ -185,27 +223,11 @@ def consume_conflict():
     heading = heading / np.pi * 180
 
     new_lat, new_lon = lat_lon_convert(lat,lon)
-    # lat_offset = lat / 111111.0 * 1.0
-    # new_lat = base_lat + lat_offset
-    # lon_offset = lon / 111111.0 * np.cos(new_lat)
-    # new_lon = base_long + lon_offset
     msg = drone + "~" + str(new_lat) + "~" + str(new_lon) + "~" + str(heading)
 
     # If your displacements aren't too great (less than a few kilometers) and you're not right at the poles, 
     #use the quick and dirty estimate that 111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) 
     #and 111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude).
-
-    #convert it to 
-
-    # status_update = json.loads(request.data)
-    # gufi = status_update['flightId']
-    # lat = status_update['lat']
-    # lon = status_update['lon']
-    # speed = status_update['speed']
-    # heading = status_update['heading']
-    # msg =  (lat,lon)
-
-    # msg = request.data
 
     def notify():
         for sub in subscriptions[:]:
@@ -215,6 +237,39 @@ def consume_conflict():
     
     return "OK"
 
+
+
+@app.route("/conflict_live", methods=['POST', 'GET'])
+def consume_conflict_live():
+    # #starts at Lake Lagunita for now
+    # base_lat = 37.422570
+    # base_long = -122.176514
+    drone,lat, lon , heading= request.data.split('~')
+
+    if drone == gufi_1:
+        drone = "drone1"
+
+    if drone == gufi_2:
+        drone = "drone2"
+
+    lat, lon , heading= float(lat), float(lon), float(heading)
+    #convert it to lat meters
+
+    heading = heading / np.pi * 180
+    # new_lat, new_lon = lat_lon_convert(lat,lon)
+    msg = drone + "~" + str(lat) + "~" + str(lon) + "~" + str(heading)
+
+    # If your displacements aren't too great (less than a few kilometers) and you're not right at the poles, 
+    #use the quick and dirty estimate that 111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) 
+    #and 111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude).
+
+    def notify():
+        for sub in subscriptions[:]:
+            sub.put(msg)
+    
+    gevent.spawn(notify)
+    
+    return "OK"
 
 @app.route("/publish")
 def publish():
