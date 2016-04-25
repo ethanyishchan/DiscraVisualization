@@ -58,11 +58,12 @@
 
               var turn_float = (parseFloat(turn) / Math.PI * 180.0).toFixed(2) ;
               var turn_float_round = Math.round( turn_float );
+              turn_float_round = -1 * turn_float_round;
               if (turn_float < 0){
                 turn_float = "Right " + -1 * turn_float + "°";
               }else if (turn_float > 0) {
                 turn_float = "Left " + turn_float + "°";
-                turn_float_round = -1 * turn_float_round
+                
               }else{
                 turn_float = turn_float + "°"
               }
@@ -151,11 +152,12 @@
               var turn_float = (parseFloat(turn) / Math.PI * 180.0).toFixed(2) ;
 
               var turn_float_round = Math.round( turn_float );
+              turn_float_round = -1 * turn_float_round
               if (turn_float < 0){
                 turn_float = "Right " + -1 * turn_float + "°";
               }else if (turn_float > 0) {
                 turn_float = "Left " + turn_float + "°";
-                turn_float_round = -1 * turn_float_round
+                
               }else{
                 turn_float = turn_float + "°"
               }

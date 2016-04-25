@@ -24,8 +24,8 @@ base_lat = 37.422570
 base_long = -122.176514
 
 #change this to whatever the gufi is right now
-gufi_1 = '38dd9f15-b703-42ac-a870-85e91a2c0d94'
-gufi_2 = 'baa123cc-fcb7-47a4-87d3-be67952039f4'
+gufi_1 = '3d64802e-97d5-444c-ac21-d1a5decb69dd'
+gufi_2 = 'fc7df749-a26f-426c-ac6c-25f1c98ca399'
 
 # SSE "protocol" is described here: http://mzl.la/UPFyxY
 class ServerSentEvent(object):
